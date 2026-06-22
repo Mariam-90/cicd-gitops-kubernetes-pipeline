@@ -1,0 +1,120 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f4f5f7;
+    margin: 0;
+    padding: 40px 16px;
+    color: #1f2430;
+}
+
+.container {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    margin: 0 0 24px;
+    font-size: 1.5rem;
+}
+
+.add-form {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.add-form input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid #d8dae0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.add-form button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.add-form button:hover {
+    background: #1d4ed8;
+}
+
+.task-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.task-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eef0f3;
+}
+
+.task-list li:last-child {
+    border-bottom: none;
+}
+
+.task-list .title {
+    flex: 1;
+    font-size: 0.95rem;
+}
+
+.task-list li.done .title {
+    text-decoration: line-through;
+    color: #9aa0ac;
+}
+
+.toggle-form, .delete-form {
+    margin: 0;
+}
+
+.check-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid #c8cbd2;
+    background: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #2563eb;
+}
+
+.task-list li.done .check-btn {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+.delete-btn {
+    border: none;
+    background: none;
+    color: #c2c6cf;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.delete-btn:hover {
+    color: #e11d48;
+}
+
+.empty-state {
+    color: #9aa0ac;
+    text-align: center;
+    padding: 24px 0;
+}
