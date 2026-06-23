@@ -28,10 +28,14 @@ pipeline {
             steps {
                 dir('app') {
                     sh '''
+                        rm -rf venv
                         python3 -m venv venv
-                        . venv/bin/activate
-                        pip install --no-cache-dir -r requirements.txt
-                        python -m py_compile app.py
+
+                        venv/bin/python -m pip install \
+                            --no-cache-dir \
+                            -r requirements.txt
+
+                        venv/bin/python -m py_compile app.py
                     '''
                 }
             }
@@ -81,28 +85,50 @@ pipeline {
                 }
             }
         }
-    }
 
-    stage('Deploy to Kubernetes (direct / mandatory requirement)') {
+        stage('Deploy to Kubernetes (direct / mandatory requirement)') {
             when {
-                expression { return params.DIRECT_DEPLOY }
+                expression {
+                    return params.DIRECT_DEPLOY
+                }
             }
+
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                withCredentials([
+                    file(
+                        credentialsId: 'kubeconfig',
+                        variable: 'KUBECONFIG'
+                    )
+                ]) {
                     sh '''
+                        echo "Applying Kubernetes manifests..."
+
                         kubectl apply -f k8s/deployment.yaml
                         kubectl apply -f k8s/service.yaml
-                        kubectl set image deployment/todo-app todo-app=${IMAGE_NAME}:${IMAGE_TAG}
-                        kubectl rollout status deployment/todo-app --timeout=120s
+
+                        echo "Deploying ${IMAGE_NAME}:${IMAGE_TAG}"
+
+                        kubectl set image \
+                            deployment/todo-app \
+                            todo-app=${IMAGE_NAME}:${IMAGE_TAG}
+
+                        echo "Waiting for Kubernetes rollout..."
+
+                        kubectl rollout status \
+                            deployment/todo-app \
+                            --timeout=120s
+
+                        kubectl get pods
+                        kubectl get service todo-app
                     '''
                 }
             }
         }
-    
+    }
 
     post {
         success {
-            echo "Pipeline succeeded: ${IMAGE_NAME}:${IMAGE_TAG} built, scanned, and pushed."
+            echo "Pipeline succeeded: ${IMAGE_NAME}:${IMAGE_TAG} built, scanned, pushed, and deployed."
         }
 
         failure {
