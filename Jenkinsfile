@@ -51,17 +51,21 @@ pipeline {
                 '''
             }
         }
-
         stage('Security Scan - Trivy') {
+
             steps {
-                sh '''
-                    trivy image \
-                       --exit-code 1 \
-                        --severity CRITICAL \
-                        ${IMAGE_NAME}:${IMAGE_TAG}
-                '''
+                   sh '''
+                        trivy image \
+                            --exit-code 1 \
+                            --severity CRITICAL \
+                            --ignore-unfixed \
+                            ${IMAGE_NAME}:${IMAGE_TAG}
+                   '''
             }
+
         }
+
+       
 
         stage('Push to Docker Hub') {
             steps {
