@@ -83,6 +83,23 @@ pipeline {
         }
     }
 
+    stage('Deploy to Kubernetes (direct / mandatory requirement)') {
+            when {
+                expression { return params.DIRECT_DEPLOY }
+            }
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        kubectl apply -f k8s/deployment.yaml
+                        kubectl apply -f k8s/service.yaml
+                        kubectl set image deployment/todo-app todo-app=${IMAGE_NAME}:${IMAGE_TAG}
+                        kubectl rollout status deployment/todo-app --timeout=120s
+                    '''
+                }
+            }
+        }
+    }
+
     post {
         success {
             echo "Pipeline succeeded: ${IMAGE_NAME}:${IMAGE_TAG} built, scanned, and pushed."
